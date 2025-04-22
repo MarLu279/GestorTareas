@@ -61,6 +61,14 @@ public class ServicioTareasArchivo implements IServicioTareas{
         }
     }
 
+    private void guardarTareasArchivo(){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(NOM_Archivo))){
+            tareas.forEach(t -> pw.println(t.toCSV()));
+        } catch (IOException e){
+            System.err.println("Error al guardar tareas:" + e.getMessage());
+        }
+    }
+
     //Metodos de interfas
     @Override
     public void listarTareas() {
@@ -114,7 +122,7 @@ public class ServicioTareasArchivo implements IServicioTareas{
             if(tar.getIdTarea() == id){
                 tar.setCompletada(completa);
                 actualizado = tar.toString();
-                agregarTareaArchivo(tar);
+                guardarTareasArchivo();
                 break;
             }
         }
