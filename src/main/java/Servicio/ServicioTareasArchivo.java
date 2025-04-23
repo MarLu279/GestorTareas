@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ServicioTareasArchivo implements IServicioTareas{
@@ -18,7 +19,7 @@ public class ServicioTareasArchivo implements IServicioTareas{
         try {
             existe = archivo.exists();
             if(existe){
-                this.tareas = obtenerTareas();
+                obtenerTareas();
             } else{
                 Files.createFile(Paths.get(NOM_Archivo));
                 System.out.println("Archivo creado");
@@ -29,24 +30,47 @@ public class ServicioTareasArchivo implements IServicioTareas{
         }
     }
     //Métodos de la clase
-    private List<Tarea> obtenerTareas(){
-        List<Tarea> auxTareas = new ArrayList<>();
+    private void obtenerTareas(){
         try{
-            List<String> lineas = Files.readAllLines(Paths.get(NOM_Archivo));
-            for (String linea:lineas){
-                String [] lineaTarea = linea.split(",");
-                String id = lineaTarea[0];
-                String descripcion = lineaTarea[1];
-                String fecha = lineaTarea[2];
-                boolean realizado = Boolean.parseBoolean(lineaTarea[3]);
-                Tarea tarea = new Tarea(descripcion,fecha,realizado);
-                auxTareas.add(tarea);
+            if (Files.exists(Paths.get(NOM_Archivo))){
+                List<String> lineas = Files.readAllLines(Paths.get(NOM_Archivo));
+                tareas.clear();//limpriar lista existente (memoria)
+                List<Integer> idsLeidos = new ArrayList<>(); //Trakear IDs
+
+                for (String linea : lineas){
+                    if (!linea.trim().isEmpty()){
+                        String[] datos = linea.split(",");
+                        // validar Id, que sea un numero
+                        try{
+                            int id = Integer.parseInt(datos[0]);
+                            //validar id, ya existe el id en la lista
+                            if (idsLeidos.contains(id)){
+                                System.err.println("[ADVERTENCIA] ID duplicado: " + id + ". Se omitira.");
+                                continue; //Saltar tarea, continuer al siguiente id
+                            }
+                            idsLeidos.add(id);
+                            // Se crea la tarea despues de validar el id, true crea tarea
+                            String descripcion = datos[1];
+                            String fecha = datos[2];
+                            boolean completada = Boolean.parseBoolean(datos[3]);
+                            Tarea tarea = new Tarea(descripcion, fecha, completada);
+                            tarea.setIdTarea(id);
+                            tareas.add(tarea);
+                        } catch (NumberFormatException e){
+                            System.err.println("[ERROR] Id no valido: " + datos[0] + ". Se omitira");
+                        }
+                    }
+                }
+                //Actualiza el contador estatico con el id mas alto
+                if (!idsLeidos.isEmpty()){
+                    int maxId = Collections.max(idsLeidos);
+                    Tarea.setContador(maxId + 1);
+                }
             }
         } catch (IOException e){
             System.err.println("Error al leer archivo");
             System.out.println(e.getMessage());
         }
-        return auxTareas;
     }
 
     private void agregarTareaArchivo(Tarea tarea){

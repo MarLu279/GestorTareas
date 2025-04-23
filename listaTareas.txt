@@ -1,6 +1,4 @@
-1,Correr,20/04/2025,false
-2,Comprar alimentos,20/04/2025,false
-3,Correr,20/04/2025,true
-4,Prueba,01/01/2023,false
-5,Prueba,01/01/2023,true
-6,Prueba sobreescribir,01/01/2023,true
+1,Tarea normal,01/01/2023,false
+abc,Tarea con ID inválido,02/02/2023,true
+2,Otra tarea normal,03/03/2023,false
+1,Tarea duplicada,04/04/2023,true

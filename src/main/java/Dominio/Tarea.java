@@ -10,7 +10,7 @@ public class Tarea {
     private String descripcion;
     private String fechaCreacion;
     private boolean completada;
-    private static int contador;
+    private static int contador = 0;
 
     public Tarea(){
         this.idTarea = ++contador;
@@ -22,8 +22,28 @@ public class Tarea {
         this.completada = completada;
     }
 
+    public Tarea(int idTarea, String descripcion, String fechaCreacion, boolean completada){
+        setIdTarea(idTarea);
+        setDescripcion(descripcion);
+        setFechaCreacion(fechaCreacion);
+        this.completada = completada;
+    }
+
     public int getIdTarea(){
         return this.idTarea;
+    }
+    public void setIdTarea(int idTarea){
+        if (idTarea <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0");
+        }
+        if (idTarea > contador){
+            contador = idTarea;
+        }
+        this.idTarea = idTarea;
+    }
+
+    public static void setContador(int contador){
+        Tarea.contador = contador;
     }
 
     public String getDescripcion(){
