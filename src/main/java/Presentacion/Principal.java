@@ -4,6 +4,8 @@ import Dominio.Tarea;
 import Servicio.IServicioTareas;
 import Servicio.ServicioTareasArchivo;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Principal {
@@ -12,7 +14,8 @@ public class Principal {
     }
 
     private static void appTareas(){
-        IServicioTareas servicioTareas = new ServicioTareasArchivo();
+        Path rutaArchivo = Paths.get("listaTareas.txt");
+        IServicioTareas servicioTareas = new ServicioTareasArchivo(rutaArchivo);
         Scanner consola = new Scanner(System.in);
         boolean bandera = false;
         System.out.println("*** Lista de Tareas ***");

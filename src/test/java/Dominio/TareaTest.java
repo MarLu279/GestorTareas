@@ -55,4 +55,10 @@ class TareaTest {
         Tarea tarea2 = new Tarea("Tarea2", "02/02/2024", true);
         assertFalse(tarea1.equals(tarea2));
     }
+
+    @Test
+    public void testConstructorConId_Invalido(){
+        assertThrows(IllegalArgumentException.class, ()-> {new Tarea(-1, "Tarea invalida",
+                "02/02/2025", false);});
+    }
 }

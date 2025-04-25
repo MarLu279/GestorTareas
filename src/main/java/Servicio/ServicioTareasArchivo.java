@@ -4,24 +4,28 @@ import Dominio.Tarea;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class ServicioTareasArchivo implements IServicioTareas{
-    private final String NOM_Archivo = "listaTareas.txt";
+    //private final String NOM_Archivo = "listaTareas.txt";
+    private final Path archivoTareas;
     private List<Tarea> tareas = new ArrayList<>();
 
-    public ServicioTareasArchivo(){
-        File archivo = new File(NOM_Archivo);
+    public ServicioTareasArchivo(Path archivoTareas){
+        this.archivoTareas = archivoTareas;
+        //NOM_Archivo -> archivoTareas.toString()
+        File archivo = new File(archivoTareas.toString());
         boolean existe = false;
         try {
             existe = archivo.exists();
             if(existe){
                 obtenerTareas();
             } else{
-                Files.createFile(Paths.get(NOM_Archivo));
+                Files.createFile(Paths.get(archivoTareas.toString()));
                 System.out.println("Archivo creado");
             }
         } catch (IOException e){
@@ -32,8 +36,9 @@ public class ServicioTareasArchivo implements IServicioTareas{
     //Métodos de la clase
     private void obtenerTareas(){
         try{
-            if (Files.exists(Paths.get(NOM_Archivo))){
-                List<String> lineas = Files.readAllLines(Paths.get(NOM_Archivo));
+            //NOM_Archivo -> archivoTareas.toString()
+            if (Files.exists(Paths.get(archivoTareas.toString()))){
+                List<String> lineas = Files.readAllLines(Paths.get(archivoTareas.toString()));
                 tareas.clear();//limpriar lista existente (memoria)
                 List<Integer> idsLeidos = new ArrayList<>(); //Trakear IDs
 
@@ -74,8 +79,9 @@ public class ServicioTareasArchivo implements IServicioTareas{
     }
 
     private void agregarTareaArchivo(Tarea tarea){
+        //NOM_Archivo -> archivoTareas.toString()
         boolean anexar = false;
-        File archivo = new File(NOM_Archivo);
+        File archivo = new File(archivoTareas.toString());
         anexar = archivo.exists();
         try(PrintWriter pw = new PrintWriter(new FileWriter(archivo,anexar))){
             pw.println(tarea.toCSV());
@@ -86,7 +92,8 @@ public class ServicioTareasArchivo implements IServicioTareas{
     }
 
     private void guardarTareasArchivo(){
-        try(PrintWriter pw = new PrintWriter(new FileWriter(NOM_Archivo))){
+        //NOM_Archivo -> archivoTareas.toString()
+        try(PrintWriter pw = new PrintWriter(new FileWriter(archivoTareas.toString()))){
             tareas.forEach(t -> pw.println(t.toCSV()));
         } catch (IOException e){
             System.err.println("Error al guardar tareas:" + e.getMessage());
@@ -95,13 +102,14 @@ public class ServicioTareasArchivo implements IServicioTareas{
 
     //Metodos de interfas
     @Override
-    public void listarTareas() {
+    public List<Tarea> listarTareas() {
         System.out.println("*** Listado de Tareas ***");
         String lista = "";
         for (Tarea tarea:this.tareas){
             lista += tarea.toString() + "\n";
         }
         System.out.println(lista);
+        return null;
     }
 
     @Override

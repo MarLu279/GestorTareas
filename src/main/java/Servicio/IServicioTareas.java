@@ -2,10 +2,12 @@ package Servicio;
 
 import Dominio.Tarea;
 
+import java.util.List;
+
 public interface IServicioTareas {
     void crearTarea(Tarea tarea);
 
-    void listarTareas();
+    List<Tarea> listarTareas();
 
     void buscarTareaID(Tarea tarea, String idbuscar);
 
