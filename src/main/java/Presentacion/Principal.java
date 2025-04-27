@@ -1,11 +1,13 @@
 package Presentacion;
 
 import Dominio.Tarea;
+import Repositorio.ITareaRepository;
+import Repositorio.TareaArchivoRepositorio;
 import Servicio.IServicioTareas;
-import Servicio.ServicioTareasArchivo;
+import Servicio.ServicioTarea;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 public class Principal {
@@ -14,14 +16,14 @@ public class Principal {
     }
 
     private static void appTareas(){
-        Path rutaArchivo = Paths.get("listaTareas.txt");
-        IServicioTareas servicioTareas = new ServicioTareasArchivo(rutaArchivo);
+        ITareaRepository repo = new TareaArchivoRepositorio(Paths.get("listaTareas.txt"));
+        IServicioTareas servicioTarea = new ServicioTarea(repo);
         Scanner consola = new Scanner(System.in);
         boolean bandera = false;
-        System.out.println("*** Lista de Tareas ***");
+        listarTareas(servicioTarea);
         while (!bandera){
             int opcion = desplegarMenu(consola);
-            bandera = ejecutarOpcion(servicioTareas, consola, opcion);
+            bandera = ejecutarOpcion(servicioTarea, consola, opcion);
         }
     }
 
@@ -49,14 +51,14 @@ public class Principal {
         return opcion;
     }
 
-    private static boolean ejecutarOpcion(IServicioTareas servicioTareas, Scanner consola, int opcion){
+    private static boolean ejecutarOpcion(IServicioTareas servicioTarea, Scanner consola, int opcion){
         boolean salir = false;
         switch (opcion){
-            case 1 -> crearTarea(consola, servicioTareas);
-            case 2 -> listarTareas(servicioTareas);
-            case 3 -> buscarTareaId(consola, servicioTareas);
-            case 4 -> buscarTareaTexto(consola, servicioTareas);
-            case 5 -> marcarTarea(servicioTareas, consola);
+            case 1 -> crearTarea(consola, servicioTarea);
+            case 2 -> listarTareas(servicioTarea);
+            case 3 -> buscarTareaId(consola, servicioTarea);
+            case 4 -> buscarTareaTexto(consola, servicioTarea);
+            case 5 -> marcarTarea(servicioTarea, consola);
             case 6 -> {
                 System.out.println("Saliendo, Adios :D");
                 salir = true;
@@ -78,25 +80,32 @@ public class Principal {
         System.out.println("Tarea agregada");
     }
 
-    private static void listarTareas(IServicioTareas servicioTareas){
-        servicioTareas.listarTareas();
+    private static void listarTareas(IServicioTareas servicioTarea){
+        System.out.println("*** Lista de Tareas ***");
+        System.out.println(servicioTarea.listarTareas());
     }
 
     private static void buscarTareaId(Scanner consola, IServicioTareas servicioTareas){
         System.out.println("Ingresa ID a buscar: ");
-        servicioTareas.buscarTareaID(new Tarea(), consola.nextLine());
+        Tarea tarea = servicioTareas.buscarTareaID(consola.nextLine());
+        System.out.println("Tarea encontrada: \n" + tarea.toString());
     }
 
     private static void buscarTareaTexto(Scanner consola, IServicioTareas servicioTareas){
         System.out.println("Ingresa la descripcion de la tarea: ");
-        servicioTareas.buscarTareaTexto(new Tarea(), consola.nextLine());
+        List<Tarea> tareasEncontradas = servicioTareas.buscarTareaTexto(consola.nextLine());
+        for (Tarea tarea:tareasEncontradas){
+            System.out.println(tarea.toString() + "\n");
+        }
     }
 
     private static void marcarTarea(IServicioTareas servicioTareas, Scanner consola){
         System.out.println("Id de la tarea a completar: ");
         int id = Integer.parseInt(consola.nextLine());
-        System.out.println("Escribe S si ya se completo la tarea");
+        System.out.println("Escribe [S] si ya se completo la tarea");
         boolean aux = (consola.nextLine()).equals("s");
-        servicioTareas.marcarTareaCompleta(id, aux);
+        boolean respServicio = servicioTareas.marcarTareaCompleta(id, aux);
+        System.out.println((respServicio) ? "Tarea actualizada" : "Tarea no actualizada");
+        System.out.println(servicioTareas.buscarTareaID(String.valueOf(id)));
     }
 }

@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 public class Tarea {
-    private int idTarea;
+    private final int idTarea;
     private String descripcion;
     private String fechaCreacion;
     private boolean completada;
@@ -23,7 +23,8 @@ public class Tarea {
     }
 
     public Tarea(int idTarea, String descripcion, String fechaCreacion, boolean completada){
-        setIdTarea(idTarea);
+        this.idTarea = idTarea;
+        sincronizarContador(idTarea);
         setDescripcion(descripcion);
         setFechaCreacion(fechaCreacion);
         this.completada = completada;
@@ -32,18 +33,11 @@ public class Tarea {
     public int getIdTarea(){
         return this.idTarea;
     }
-    public void setIdTarea(int idTarea){
-        if (idTarea <= 0) {
-            throw new IllegalArgumentException("El ID debe ser mayor que 0");
-        }
-        if (idTarea > contador){
-            contador = idTarea;
-        }
-        this.idTarea = idTarea;
-    }
 
-    public static void setContador(int contador){
-        Tarea.contador = contador;
+    public static void sincronizarContador(int idEx){
+        if (idEx > contador){
+            contador = idEx;
+        }
     }
 
     public String getDescripcion(){
@@ -56,9 +50,6 @@ public class Tarea {
         this.descripcion = descripcion;
     }
 
-    public String getFechaCreacion(){
-        return fechaCreacion;
-    }
     public void setFechaCreacion(String fechaCreacion){
         if(fechaCreacion == null || fechaCreacion.trim().isEmpty()){
             throw new IllegalArgumentException("La fecha no puede estas vacia");
@@ -72,9 +63,6 @@ public class Tarea {
         }
     }
 
-    public boolean isCompletada(){
-        return this.completada;
-    }
     public void setCompletada(boolean completada){
       if(this.completada && !completada){
           throw new IllegalStateException("No se puede marcar como pendiente una tarea marcada como completada");

@@ -7,11 +7,11 @@ import java.util.List;
 public interface IServicioTareas {
     void crearTarea(Tarea tarea);
 
-    List<Tarea> listarTareas();
+    String listarTareas();
 
-    void buscarTareaID(Tarea tarea, String idbuscar);
+    Tarea buscarTareaID(String idbuscar);
 
-    void buscarTareaTexto(Tarea tarea, String texto);
+    List<Tarea> buscarTareaTexto(String texto);
 
-    void marcarTareaCompleta(int id, boolean completa);
+   boolean marcarTareaCompleta(int id, boolean completa);
 }
