@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ServicioTarea implements IServicioTareas{
     private final ITareaRepository repositorio;
-    private List<Tarea> tareas = new ArrayList<>();
+    List<Tarea> tareas = new ArrayList<>();
 
     public ServicioTarea(ITareaRepository repositorio){
         this.repositorio = repositorio;
@@ -36,10 +36,15 @@ public class ServicioTarea implements IServicioTareas{
     @Override
     public Tarea buscarTareaID(String idbuscar) {
         Tarea tarea = null;
-        for(Tarea aux: this.tareas){
-            if(aux.getIdTarea() == Integer.parseInt(idbuscar)){
-                tarea = aux;
+        try{
+            int id = Integer.parseInt(idbuscar);
+            for(Tarea aux: this.tareas){
+                if(aux.getIdTarea() == id){
+                    tarea = aux;
+                }
             }
+        } catch (NumberFormatException e){
+            throw new NumberFormatException("El ID debe ser un numero válido");
         }
         return  tarea;
     }

@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 public class Tarea {
-    private final int idTarea;
+    private int idTarea;
     private String descripcion;
     private String fechaCreacion;
     private boolean completada;
@@ -23,7 +23,7 @@ public class Tarea {
     }
 
     public Tarea(int idTarea, String descripcion, String fechaCreacion, boolean completada){
-        this.idTarea = idTarea;
+        setIdTarea(idTarea);
         sincronizarContador(idTarea);
         setDescripcion(descripcion);
         setFechaCreacion(fechaCreacion);
@@ -32,6 +32,13 @@ public class Tarea {
 
     public int getIdTarea(){
         return this.idTarea;
+    }
+
+    public void setIdTarea(int id){
+        if(id <=0) {
+            throw new IllegalArgumentException("Id Invalido");
+        }
+        this.idTarea = id;
     }
 
     public static void sincronizarContador(int idEx){
@@ -61,6 +68,10 @@ public class Tarea {
         }catch (DateTimeParseException e){
             throw new IllegalArgumentException("Formato de fecha invalido. Usar dd/MM/yyyy");
         }
+    }
+
+    public boolean isCompletado() {
+        return this.completada;
     }
 
     public void setCompletada(boolean completada){
